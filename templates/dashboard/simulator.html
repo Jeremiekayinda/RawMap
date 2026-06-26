@@ -1,47 +1,80 @@
-{% extends "base.html" %}
+{% extends "dashboard/base_dashboard.html" %}
 {% load static %}
 
 {% block title %}{{ page_title }}{% endblock %}
 
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'css/dashboard/simulator.css' %}">
-{% endblock %}
-
-{% block content %}
-<div class="simulator-dashboard py-4">
-    <div class="container-fluid">
-        <header class="simulator-header mb-4">
-            <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
-                <div>
-                    <h1 class="h3 mb-1">Simulateur d'affluence</h1>
-                    <p class="text-muted mb-0">
-                        Interface temporaire — remplace les ESP32 pour simuler les entrées et sorties.
-                    </p>
-                </div>
-                <div class="d-flex gap-2">
-                    <a href="{% url 'core:home' %}" class="btn btn-outline-primary">Voir la carte</a>
-                    <a href="{% url 'admin:index' %}" class="btn btn-outline-secondary">Admin Django</a>
-                </div>
-            </div>
-        </header>
-
-        <div id="simulator-alert" class="alert d-none" role="alert"></div>
-
-        <div id="simulator-loading" class="text-center py-5">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Chargement…</span>
-            </div>
-            <p class="mt-2 text-muted">Chargement des agences…</p>
+{% block dashboard_content %}
+<header class="dashboard-top mb-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
+        <div>
+            <h1 class="rm-title-lg mb-1">Simulateur d'affluence</h1>
+            <p class="rm-text-muted mb-0">Contrôlez l'affluence en temps réel — remplace temporairement les capteurs ESP32.</p>
         </div>
+    </div>
+</header>
 
-        <div id="simulator-grid" class="row g-3 d-none"></div>
+<div class="row g-3 mb-4">
+    <div class="col-sm-6 col-xl-3">
+        <div class="rm-stat-card">
+            <div class="rm-stat-label">Agences actives</div>
+            <div class="rm-stat-value" id="stat-agencies">—</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="rm-stat-card" style="border-left-color: var(--rm-aff-faible);">
+            <div class="rm-stat-label">Affluence faible</div>
+            <div class="rm-stat-value" id="stat-faible">—</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="rm-stat-card" style="border-left-color: var(--rm-aff-moyenne);">
+            <div class="rm-stat-label">Affluence moyenne</div>
+            <div class="rm-stat-value" id="stat-moyenne">—</div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-xl-3">
+        <div class="rm-stat-card" style="border-left-color: var(--rm-aff-forte);">
+            <div class="rm-stat-label">Affluence forte</div>
+            <div class="rm-stat-value" id="stat-forte">—</div>
+        </div>
     </div>
 </div>
 
-{# Token CSRF pour les requêtes POST #}
+<div class="row g-3 mb-4">
+    <div class="col-lg-5">
+        <div class="rm-card rm-chart-card">
+            <div class="rm-card-body">
+                <h2 class="rm-title-md mb-3"><i class="bi bi-pie-chart me-2"></i>Répartition affluence</h2>
+                <canvas id="affluence-chart" height="220" aria-label="Graphique de répartition de l'affluence"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div class="rm-card">
+            <div class="rm-card-body">
+                <h2 class="rm-title-md mb-2"><i class="bi bi-info-circle me-2"></i>Simulation en direct</h2>
+                <p class="rm-text-muted mb-0 small">
+                    Les modifications sont synchronisées avec la carte via BroadcastChannel.
+                    Utilisez les boutons Entrée / Sortie / Reset sur chaque agence ci-dessous.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="simulator-alert" class="alert d-none rm-alert" role="alert"></div>
+
+<div id="simulator-loading" class="rm-loader py-5">
+    <div class="rm-spinner"></div>
+    <p class="rm-text-muted mb-0">Chargement des agences…</p>
+</div>
+
+<div id="simulator-grid" class="row g-3 d-none"></div>
+
 <meta name="csrf-token" content="{{ csrf_token }}">
 {% endblock %}
 
 {% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script src="{% static 'js/dashboard/simulator.js' %}"></script>
 {% endblock %}

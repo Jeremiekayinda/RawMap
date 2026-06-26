@@ -4,7 +4,6 @@ Tests unitaires — application iot.
 
 from datetime import timedelta
 
-from django.contrib.gis.geos import Point
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.utils import timezone
@@ -36,7 +35,7 @@ class IoTTestMixin:
             province='Kinshasa',
             telephone='0812345678',
             email='iot@rawbank.cd',
-            localisation=Point(15.32, -4.32, srid=4326),
+            latitude=-4.32, longitude=15.32,
             capacite_max=50,
         )
 

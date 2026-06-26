@@ -9,6 +9,6 @@ from apps.core import views
 app_name = 'core'
 
 urlpatterns = [
-    path('', views.home, name='home'),
+    path('home/', views.home, name='home'),
     path('agencies/<int:pk>/', views.agency_detail, name='agency-detail'),
 ]

@@ -41,7 +41,6 @@ DJANGO_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.gis',  # GeoDjango / PostGIS
 ]
 
 THIRD_PARTY_APPS = [
@@ -103,21 +102,39 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 # ---------------------------------------------------------------------------
-# Base de données PostgreSQL + PostGIS
+# Base de données
+# MVP local : SQLite (aucune installation requise).
+# Production / équipe : DB_ENGINE=postgresql dans .env
 # ---------------------------------------------------------------------------
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': os.getenv('POSTGRES_DB', 'rawmap'),
-        'USER': os.getenv('POSTGRES_USER', 'rawmap_user'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
-        'HOST': os.getenv('POSTGRES_HOST', 'localhost'),
-        'PORT': os.getenv('POSTGRES_PORT', '5432'),
-        'OPTIONS': {
-            'sslmode': os.getenv('POSTGRES_SSLMODE', 'prefer'),
-        },
+DB_ENGINE = os.getenv('DB_ENGINE', 'sqlite').lower()
+
+if DB_ENGINE == 'postgresql':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.getenv('POSTGRES_DB', 'rawmap'),
+            'USER': os.getenv('POSTGRES_USER', 'rawmap_user'),
+            'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
+            'HOST': os.getenv('POSTGRES_HOST', 'localhost'),
+            'PORT': os.getenv('POSTGRES_PORT', '5432'),
+            'OPTIONS': {
+                'sslmode': os.getenv('POSTGRES_SSLMODE', 'prefer'),
+            },
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+
+# ---------------------------------------------------------------------------
+# Authentification
+# ---------------------------------------------------------------------------
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/home/'
 
 # ---------------------------------------------------------------------------
 # Validation des mots de passe
@@ -237,10 +254,7 @@ CSRF_COOKIE_HTTPONLY = os.getenv(
 ).lower() in ('true', '1', 'yes')
 
 # ---------------------------------------------------------------------------
-# GeoDjango (chemins GDAL/GEOS — à adapter selon l'OS)
+# GeoDjango / PostGIS (désactivé pour le MVP — réactivation future)
 # ---------------------------------------------------------------------------
-if os.getenv('GDAL_LIBRARY_PATH'):
-    GDAL_LIBRARY_PATH = os.getenv('GDAL_LIBRARY_PATH')
-
-if os.getenv('GEOS_LIBRARY_PATH'):
-    GEOS_LIBRARY_PATH = os.getenv('GEOS_LIBRARY_PATH')
+# USE_GEODJANGO = os.getenv('USE_GEODJANGO', 'False').lower() in ('true', '1', 'yes')
+# Ajouter django.contrib.gis + ENGINE postgis + GDAL lors de la migration PostGIS.

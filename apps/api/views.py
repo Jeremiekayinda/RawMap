@@ -33,7 +33,7 @@ class AgenceViewSet(viewsets.ReadOnlyModelViewSet):
     Endpoints :
         GET /api/v1/agencies/          — Liste des agences actives
         GET /api/v1/agencies/<id>/     — Détail d'une agence
-        GET /api/v1/agencies/nearby/   — Agences à proximité (PostGIS)
+        GET /api/v1/agencies/nearby/   — Agences à proximité (Haversine)
     """
 
     serializer_class = AgenceListSerializer

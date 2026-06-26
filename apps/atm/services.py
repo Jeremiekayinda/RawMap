@@ -4,11 +4,9 @@ Couche service pour l'application atm.
 Centralise la logique métier et les requêtes complexes.
 """
 
-from django.contrib.gis.db.models.functions import Distance
-from django.contrib.gis.geos import Point
-from django.contrib.gis.measure import D
 from django.db.models import QuerySet
 
+from apps.agencies.utils.geo import haversine_km
 from apps.atm.models import ATM, StatutATM
 
 
@@ -56,23 +54,33 @@ class ATMService:
         latitude: float,
         radius_km: float = 2.0,
         disponibles_only: bool = True,
-    ) -> QuerySet[ATM]:
+    ) -> list[ATM]:
         """
         Recherche les DAB dans un rayon donné (km) autour d'un point GPS.
+
+        MVP : calcul Haversine en Python (sans PostGIS).
         """
-        point = Point(longitude, latitude, srid=4326)
-        queryset = (
-            cls.get_queryset_base()
-            .filter(localisation__distance_lte=(point, D(km=radius_km)))
-            .annotate(distance=Distance('localisation', point))
-            .order_by('distance')
-        )
+        queryset = cls.get_queryset_base()
         if disponibles_only:
             queryset = queryset.filter(
                 statut=StatutATM.DISPONIBLE,
                 cash_disponible=True,
             )
-        return queryset
+
+        results = []
+        for atm in queryset:
+            distance_km = haversine_km(
+                latitude,
+                longitude,
+                float(atm.latitude),
+                float(atm.longitude),
+            )
+            if distance_km <= radius_km:
+                atm.distance = distance_km * 1000
+                results.append(atm)
+
+        results.sort(key=lambda item: item.distance)
+        return results
 
     @staticmethod
     def set_statut(atm: ATM, statut: str) -> ATM:

@@ -1,35 +1,28 @@
 /**
- * RawMap — Styles du simulateur d'affluence (dashboard admin)
+ * RawMap — Dashboard simulateur (styles complémentaires)
  */
 
-.simulator-dashboard {
-    min-height: calc(100vh - 120px);
-    background-color: #f8f9fa;
-}
-
-.simulator-header h1 {
-    font-weight: 700;
+.simulator-dashboard,
+.rm-dashboard-main {
+    animation: rmFadeIn 0.4s ease-out;
 }
 
 .agency-card {
-    border: none;
-    border-radius: 0.75rem;
-    box-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.06);
-    transition: box-shadow 0.2s ease, transform 0.2s ease;
-    height: 100%;
+    transition: transform var(--rm-transition), box-shadow var(--rm-transition);
 }
 
 .agency-card:hover {
-    box-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.1);
+    transform: translateY(-3px);
+    box-shadow: var(--rm-shadow);
 }
 
 .agency-card.updating {
-    opacity: 0.7;
+    opacity: 0.65;
     pointer-events: none;
 }
 
 .agency-card-header {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    border-bottom: 1px solid var(--rm-gray-100);
     padding-bottom: 0.75rem;
     margin-bottom: 0.75rem;
 }
@@ -42,7 +35,7 @@
 
 .agency-card-code {
     font-size: 0.8125rem;
-    color: #6c757d;
+    color: var(--rm-gray-500);
 }
 
 .affluence-stat {
@@ -53,38 +46,8 @@
     font-size: 0.9375rem;
 }
 
-.affluence-stat-label {
-    color: #6c757d;
-}
-
-.affluence-stat-value {
-    font-weight: 600;
-}
-
-.niveau-badge {
-    display: inline-block;
-    padding: 0.2rem 0.65rem;
-    border-radius: 999px;
-    font-size: 0.8125rem;
-    font-weight: 600;
-    color: #fff;
-}
-
-.niveau-badge.vert {
-    background-color: #28a745;
-}
-
-.niveau-badge.orange {
-    background-color: #fd7e14;
-}
-
-.niveau-badge.rouge {
-    background-color: #dc3545;
-}
-
-.niveau-badge.default {
-    background-color: #6c757d;
-}
+.affluence-stat-label { color: var(--rm-gray-500); }
+.affluence-stat-value { font-weight: 600; }
 
 .simulator-actions {
     display: flex;
@@ -93,13 +56,11 @@
     margin-top: 1rem;
 }
 
-.simulator-actions .btn {
+.simulator-actions .rm-btn {
     flex: 1 1 auto;
-    min-width: 90px;
+    min-width: 80px;
 }
 
 @media (max-width: 575.98px) {
-    .simulator-actions .btn {
-        flex: 1 1 100%;
-    }
+    .simulator-actions .rm-btn { flex: 1 1 100%; }
 }

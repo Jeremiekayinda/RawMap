@@ -4,7 +4,6 @@ Tests unitaires — application affluence.
 
 from decimal import Decimal
 
-from django.contrib.gis.geos import Point
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
@@ -28,7 +27,7 @@ class AffluenceTestMixin:
             province='Kinshasa',
             telephone='0812345678',
             email='affluence@rawbank.cd',
-            localisation=Point(15.32, -4.32, srid=4326),
+            latitude=-4.32, longitude=15.32,
             capacite_max=capacite_max,
         )
 
@@ -144,7 +143,7 @@ class AffluenceModelTests(AffluenceTestMixin, TestCase):
     def test_str_affluence(self):
         affluence = AffluenceService.update_affluence(self.agence, 40)
         self.assertIn('40 pers.', str(affluence))
-        self.assertIn('Vert', str(affluence))
+        self.assertIn('Faible', str(affluence))
 
 
 class ValidatorsTests(TestCase):

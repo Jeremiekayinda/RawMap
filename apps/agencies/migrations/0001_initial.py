@@ -1,6 +1,5 @@
 # Generated manually for RawMap — application agencies
 
-import django.contrib.gis.db.models.fields
 import django.core.validators
 import apps.agencies.validators
 from django.db import migrations, models
@@ -78,12 +77,23 @@ class Migration(migrations.Migration):
                 ),
                 ('email', models.EmailField(max_length=254, verbose_name='email')),
                 (
-                    'localisation',
-                    django.contrib.gis.db.models.fields.PointField(
-                        geography=True,
-                        help_text='Coordonnées GPS (longitude, latitude) — SRID 4326.',
-                        srid=4326,
-                        verbose_name='localisation',
+                    'latitude',
+                    models.DecimalField(
+                        decimal_places=6,
+                        help_text='Latitude WGS84 (ex. -4.321700).',
+                        max_digits=9,
+                        validators=[apps.agencies.validators.validate_latitude],
+                        verbose_name='latitude',
+                    ),
+                ),
+                (
+                    'longitude',
+                    models.DecimalField(
+                        decimal_places=6,
+                        help_text='Longitude WGS84 (ex. 15.322200).',
+                        max_digits=9,
+                        validators=[apps.agencies.validators.validate_longitude],
+                        verbose_name='longitude',
                     ),
                 ),
                 (
@@ -206,6 +216,13 @@ class Migration(migrations.Migration):
         migrations.AddIndex(
             model_name='agence',
             index=models.Index(fields=['code'], name='agencies_ag_code_3d4e5f_idx'),
+        ),
+        migrations.AddIndex(
+            model_name='agence',
+            index=models.Index(
+                fields=['latitude', 'longitude'],
+                name='agencies_ag_lat_lon_idx',
+            ),
         ),
         migrations.AddConstraint(
             model_name='horaire',

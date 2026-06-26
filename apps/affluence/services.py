@@ -38,9 +38,9 @@ class AffluenceService:
         """
         Détermine le niveau d'alerte selon le taux d'occupation.
 
-        - 0 à 40 %   → VERT
-        - 41 à 70 %  → ORANGE
-        - > 70 %     → ROUGE
+        - 0 à 40 %   → Faible (vert)
+        - 41 à 70 %  → Moyenne (orange)
+        - > 70 %     → Forte (rouge)
         """
         taux = Decimal(taux_occupation)
         if taux <= Decimal('40'):

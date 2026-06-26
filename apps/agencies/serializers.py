@@ -69,14 +69,7 @@ class AgenceSerializer(serializers.ModelSerializer):
         source='get_statut_display',
         read_only=True,
     )
-    latitude = serializers.FloatField(
-        source='localisation.y',
-        read_only=True,
-    )
-    longitude = serializers.FloatField(
-        source='localisation.x',
-        read_only=True,
-    )
+    atm_disponibles_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Agence
@@ -90,7 +83,6 @@ class AgenceSerializer(serializers.ModelSerializer):
             'province',
             'telephone',
             'email',
-            'localisation',
             'latitude',
             'longitude',
             'capacite_max',
@@ -98,6 +90,7 @@ class AgenceSerializer(serializers.ModelSerializer):
             'photo',
             'statut',
             'statut_display',
+            'atm_disponibles_count',
             'services',
             'service_ids',
             'horaires',

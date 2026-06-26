@@ -2,7 +2,6 @@
 Tests unitaires — application atm.
 """
 
-from django.contrib.gis.geos import Point
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
@@ -25,7 +24,7 @@ class ATMModelTests(TestCase):
             province='Kinshasa',
             telephone='0812345678',
             email='gombe@rawbank.cd',
-            localisation=Point(15.32, -4.32, srid=4326),
+            latitude=-4.32, longitude=15.32,
             capacite_max=50,
             statut=StatutAgence.ACTIF,
         )
@@ -33,7 +32,7 @@ class ATMModelTests(TestCase):
             'agence': self.agence,
             'nom': 'DAB Gombe Entrée',
             'code_atm': 'ATM-KIN-001',
-            'localisation': Point(15.3201, -4.3201, srid=4326),
+            'latitude': -4.3201, 'longitude': 15.3201,
             'statut': StatutATM.DISPONIBLE,
             'cash_disponible': True,
             'description': 'DAB situé à l\'entrée principale',
@@ -103,14 +102,14 @@ class ATMServiceTests(TestCase):
             province='Kinshasa',
             telephone='0812345679',
             email='limete@rawbank.cd',
-            localisation=Point(15.35, -4.35, srid=4326),
+            latitude=-4.35, longitude=15.35,
             capacite_max=30,
         )
         self.atm_disponible = ATM.objects.create(
             agence=self.agence,
             nom='DAB Limete 1',
             code_atm='ATM-LIM-001',
-            localisation=Point(15.3501, -4.3501, srid=4326),
+            latitude=-4.3501, longitude=15.3501,
             statut=StatutATM.DISPONIBLE,
             cash_disponible=True,
         )
@@ -118,7 +117,7 @@ class ATMServiceTests(TestCase):
             agence=self.agence,
             nom='DAB Limete 2',
             code_atm='ATM-LIM-002',
-            localisation=Point(15.3502, -4.3502, srid=4326),
+            latitude=-4.3502, longitude=15.3502,
             statut=StatutATM.HORS_SERVICE,
             cash_disponible=False,
         )

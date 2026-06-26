@@ -1,38 +1,86 @@
 /**
- * RawMap — Styles page détail agence
+ * RawMap — Page détail agence (style premium)
  */
 
 .agency-detail-page {
-    background-color: #f8f9fa;
-    min-height: calc(100vh - 120px);
+    background: var(--rm-gray-50);
+    min-height: calc(100vh - var(--rm-navbar-h));
+    animation: rmFadeIn 0.4s ease-out;
 }
 
-.agency-detail-header h1 {
+.agency-hero {
+    background: var(--rm-black);
+    color: var(--rm-white);
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+}
+
+.agency-hero-inner {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1.5rem;
+}
+
+.agency-hero h1 {
+    font-size: clamp(1.5rem, 3vw, 2rem);
     font-weight: 700;
+    margin-bottom: 0.35rem;
+}
+
+.agency-hero-code {
+    color: var(--rm-gold);
+    font-weight: 600;
+}
+
+.agency-hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
 }
 
 .detail-card {
     border: none;
-    border-radius: 0.75rem;
+    border-radius: var(--rm-radius-lg);
+    box-shadow: var(--rm-shadow-sm);
+    margin-bottom: 1.5rem;
+    transition: box-shadow var(--rm-transition);
+}
+
+.detail-card:hover {
+    box-shadow: var(--rm-shadow);
+}
+
+.detail-card .card-body { padding: 1.5rem; }
+
+.detail-card .card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.detail-card .card-title i {
+    color: var(--rm-gold);
 }
 
 .detail-dl dt {
     font-weight: 600;
-    color: #6c757d;
-    font-size: 0.875rem;
+    color: var(--rm-gray-500);
+    font-size: 0.8125rem;
     margin-top: 0.75rem;
 }
 
-.detail-dl dt:first-child {
-    margin-top: 0;
-}
+.detail-dl dt:first-child { margin-top: 0; }
+.detail-dl dd { margin-bottom: 0; }
 
-.detail-dl dd {
-    margin-bottom: 0;
-}
-
-.horaires-list .list-group-item {
+.horaires-list .list-group-item,
+.atm-list .list-group-item {
     background: transparent;
+    border-color: var(--rm-gray-100);
 }
 
 .services-list {
@@ -42,93 +90,77 @@
 }
 
 .services-list li {
-    padding: 0.5rem 0;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    padding: 0.65rem 0;
+    border-bottom: 1px solid var(--rm-gray-100);
 }
 
-.services-list li:last-child {
-    border-bottom: none;
-}
+.services-list li:last-child { border-bottom: none; }
 
-.atm-list .list-group-item {
-    background: transparent;
-}
-
-/* Affluence */
-.affluence-stats-grid {
-    margin-top: 0.5rem;
-}
+.affluence-stats-grid { margin-top: 0.5rem; }
 
 .affluence-stat-box {
-    background: #f8f9fa;
-    border-radius: 0.5rem;
-    padding: 0.75rem;
+    background: var(--rm-gray-50);
+    border-radius: var(--rm-radius);
+    padding: 1rem;
     text-align: center;
     height: 100%;
+    border: 1px solid var(--rm-gray-100);
+    transition: transform var(--rm-transition);
+}
+
+.affluence-stat-box:hover {
+    transform: translateY(-2px);
 }
 
 .affluence-stat-label {
     display: block;
-    font-size: 0.8125rem;
-    color: #6c757d;
-    margin-bottom: 0.25rem;
+    font-size: 0.75rem;
+    color: var(--rm-gray-500);
+    margin-bottom: 0.35rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
 }
 
 .affluence-stat-value {
     display: block;
-    font-size: 1.25rem;
+    font-size: 1.35rem;
     font-weight: 700;
-    color: #212529;
 }
 
 .niveau-badge {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem 0.85rem;
     border-radius: 999px;
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     font-weight: 600;
-    color: #fff;
+    color: var(--rm-white);
 }
 
-.niveau-badge.niveau-vert {
-    background-color: #28a745;
-}
-
-.niveau-badge.niveau-orange {
-    background-color: #fd7e14;
-}
-
-.niveau-badge.niveau-rouge {
-    background-color: #dc3545;
-}
-
-/* Carte Leaflet */
 #agency-detail-map {
     width: 100%;
     height: 320px;
-    border-radius: 0 0 0.75rem 0.75rem;
-    z-index: 1;
+    border-radius: 0 0 var(--rm-radius-lg) var(--rm-radius-lg);
 }
 
-@media (min-width: 992px) {
-    #agency-detail-map {
-        height: 360px;
-    }
-}
-
-/* Graphique */
 .chart-container {
     position: relative;
     height: 280px;
-    width: 100%;
+}
+
+.breadcrumb a {
+    color: var(--rm-gold);
+    text-decoration: none;
+}
+
+.breadcrumb a:hover { text-decoration: underline; }
+
+@media (min-width: 992px) {
+    #agency-detail-map { height: 360px; }
 }
 
 @media (max-width: 575.98px) {
-    #agency-detail-map {
-        height: 260px;
-    }
-
-    .chart-container {
-        height: 220px;
-    }
+    .agency-hero { padding: 1.5rem 0; }
+    #agency-detail-map { height: 260px; }
+    .chart-container { height: 220px; }
 }

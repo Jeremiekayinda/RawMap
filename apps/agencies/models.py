@@ -2,9 +2,12 @@
 Modèles de l'application agencies.
 
 Gestion des agences bancaires Rawbank, de leurs horaires et services.
+
+Note MVP : coordonnées stockées en latitude/longitude (DecimalField).
+Migration future possible vers PointField PostGIS sans changer la logique métier.
 """
 
-from django.contrib.gis.db import models
+from django.db import models
 from django.core.validators import MinValueValidator
 from django.utils.translation import gettext_lazy as _
 
@@ -12,6 +15,8 @@ from apps.agencies.validators import (
     validate_capacite_max,
     validate_code_agence,
     validate_horaires,
+    validate_latitude,
+    validate_longitude,
     validate_telephone,
 )
 
@@ -78,11 +83,19 @@ class Agence(models.Model):
         validators=[validate_telephone],
     )
     email = models.EmailField(_('email'))
-    localisation = models.PointField(
-        _('localisation'),
-        geography=True,
-        srid=4326,
-        help_text=_('Coordonnées GPS (longitude, latitude) — SRID 4326.'),
+    latitude = models.DecimalField(
+        _('latitude'),
+        max_digits=9,
+        decimal_places=6,
+        validators=[validate_latitude],
+        help_text=_('Latitude WGS84 (ex. -4.321700).'),
+    )
+    longitude = models.DecimalField(
+        _('longitude'),
+        max_digits=9,
+        decimal_places=6,
+        validators=[validate_longitude],
+        help_text=_('Longitude WGS84 (ex. 15.322200).'),
     )
     capacite_max = models.PositiveIntegerField(
         _('capacité maximale'),
@@ -119,6 +132,7 @@ class Agence(models.Model):
         indexes = [
             models.Index(fields=['statut', 'ville']),
             models.Index(fields=['code']),
+            models.Index(fields=['latitude', 'longitude']),
         ]
 
     def __str__(self):

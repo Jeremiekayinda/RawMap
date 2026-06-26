@@ -3,14 +3,13 @@ Administration Django — application atm.
 """
 
 from django.contrib import admin
-from django.contrib.gis.admin import GISModelAdmin
 from django.utils.translation import gettext_lazy as _
 
 from apps.atm.models import ATM
 
 
 @admin.register(ATM)
-class ATMAdmin(GISModelAdmin):
+class ATMAdmin(admin.ModelAdmin):
     """Administration des distributeurs automatiques."""
 
     list_display = (
@@ -44,7 +43,7 @@ class ATMAdmin(GISModelAdmin):
             'fields': ('agence', 'nom', 'code_atm', 'statut', 'cash_disponible'),
         }),
         (_('Localisation'), {
-            'fields': ('localisation',),
+            'fields': ('latitude', 'longitude'),
         }),
         (_('Informations complémentaires'), {
             'fields': ('description',),

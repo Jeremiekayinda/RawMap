@@ -4,12 +4,11 @@ Couche service pour l'application agencies.
 Centralise la logique métier et les requêtes complexes.
 """
 
-from django.contrib.gis.db.models.functions import Distance
-from django.contrib.gis.geos import Point
-from django.contrib.gis.measure import D
-from django.db.models import Prefetch, QuerySet
+from django.db.models import Count, Prefetch, Q, QuerySet
 
 from apps.agencies.models import Agence, Horaire, Service, StatutAgence
+from apps.agencies.utils.geo import haversine_km
+from apps.atm.models import StatutATM
 
 
 class AgenceService:
@@ -21,6 +20,14 @@ class AgenceService:
         return Agence.objects.prefetch_related(
             Prefetch('horaires', queryset=Horaire.objects.order_by('jour')),
             'services',
+        ).annotate(
+            atm_disponibles_count=Count(
+                'atms',
+                filter=Q(
+                    atms__statut=StatutATM.DISPONIBLE,
+                    atms__cash_disponible=True,
+                ),
+            ),
         )
 
     @classmethod
@@ -54,23 +61,30 @@ class AgenceService:
         latitude: float,
         radius_km: float = 5.0,
         actives_only: bool = True,
-    ) -> QuerySet[Agence]:
+    ) -> list[Agence]:
         """
         Recherche les agences dans un rayon donné (km) autour d'un point GPS.
 
-        Utilise les capacités PostGIS (distance_spheroid).
+        MVP : calcul Haversine en Python (sans PostGIS).
         """
-        point = Point(longitude, latitude, srid=4326)
-        queryset = (
-            cls.get_queryset_base()
-            .filter(localisation__distance_lte=(point, D(km=radius_km)))
-            .annotate(distance=Distance('localisation', point))
-            .order_by('distance')
-        )
-
+        queryset = cls.get_queryset_base()
         if actives_only:
             queryset = queryset.filter(statut=StatutAgence.ACTIF)
-        return queryset
+
+        results = []
+        for agence in queryset:
+            distance_km = haversine_km(
+                latitude,
+                longitude,
+                float(agence.latitude),
+                float(agence.longitude),
+            )
+            if distance_km <= radius_km:
+                agence.distance = distance_km * 1000  # mètres pour l'API
+                results.append(agence)
+
+        results.sort(key=lambda item: item.distance)
+        return results
 
     @staticmethod
     def set_statut(agence: Agence, statut: str) -> Agence:

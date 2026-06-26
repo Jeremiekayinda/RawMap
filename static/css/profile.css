@@ -1,0 +1,15 @@
+/**
+ * RawMap — Page profil (compléments layout)
+ */
+
+.rm-profile-page .rm-card {
+    animation: rmFadeIn 0.5s ease-out;
+}
+
+@media (max-width: 575.98px) {
+    .rm-profile-header,
+    .rm-profile-body {
+        padding-left: 1.25rem;
+        padding-right: 1.25rem;
+    }
+}

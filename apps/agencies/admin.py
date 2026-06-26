@@ -3,7 +3,6 @@ Administration Django — application agencies.
 """
 
 from django.contrib import admin
-from django.contrib.gis.admin import GISModelAdmin
 from django.utils.translation import gettext_lazy as _
 
 from apps.agencies.models import Agence, Horaire, Service
@@ -18,8 +17,8 @@ class HoraireInline(admin.TabularInline):
 
 
 @admin.register(Agence)
-class AgenceAdmin(GISModelAdmin):
-    """Administration des agences avec carte géographique."""
+class AgenceAdmin(admin.ModelAdmin):
+    """Administration des agences bancaires."""
 
     list_display = (
         'nom',
@@ -46,7 +45,7 @@ class AgenceAdmin(GISModelAdmin):
             'fields': ('adresse', 'commune', 'ville', 'province', 'telephone', 'email'),
         }),
         (_('Localisation & capacité'), {
-            'fields': ('localisation', 'capacite_max'),
+            'fields': ('latitude', 'longitude', 'capacite_max'),
         }),
         (_('Informations complémentaires'), {
             'fields': ('description', 'photo', 'services'),

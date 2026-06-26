@@ -37,9 +37,15 @@ const RawMapApp = (() => {
     ];
 
     const NIVEAU_LABELS = {
-        vert: 'Vert',
-        orange: 'Orange',
-        rouge: 'Rouge',
+        vert: 'Faible',
+        orange: 'Moyenne',
+        rouge: 'Forte',
+    };
+
+    const NIVEAU_EMOJI = {
+        vert: '🟢',
+        orange: '🟠',
+        rouge: '🔴',
     };
 
     /* ------------------------------------------------------------------ */
@@ -52,6 +58,8 @@ const RawMapApp = (() => {
     let affluenceByAgency = new Map();
     let agencyMarkers = new Map();
     let agencyLayerGroup = null;
+    let selectedAgencyId = null;
+    let activeFilter = 'all';
 
     /* ------------------------------------------------------------------ */
     /* Utilitaires DOM                                                     */
@@ -203,49 +211,138 @@ const RawMapApp = (() => {
             .join(', ');
     }
 
-    function buildPopupContent(agency) {
+    function getTodayHoraire(agency) {
+        if (!Array.isArray(agency.horaires) || agency.horaires.length === 0) {
+            return null;
+        }
+        const today = JOURS_SEMAINE[new Date().getDay()];
+        return agency.horaires.find((h) => h.jour === today) || null;
+    }
+
+    function formatTodayHours(agency) {
+        const horaire = getTodayHoraire(agency);
+        if (!horaire) {
+            return 'Non renseigné';
+        }
+        const open = horaire.heure_ouverture.slice(0, 5);
+        const close = horaire.heure_fermeture.slice(0, 5);
+        return `${open} – ${close}`;
+    }
+
+    function getDirectionsUrl(agency) {
+        return (
+            `https://www.google.com/maps/dir/?api=1`
+            + `&destination=${agency.latitude},${agency.longitude}`
+        );
+    }
+
+    function getLevelLabel(level, affluence) {
+        return affluence?.niveau_display || NIVEAU_LABELS[level] || 'N/A';
+    }
+
+    function buildAgencyPanelHtml(agency, compact = false) {
         const affluence = getAffluenceForAgency(agency.id);
         const isOpen = isAgencyOpen(agency);
         const openLabel = isOpen === null ? 'Non renseigné' : isOpen ? 'Ouverte' : 'Fermée';
-        const openClass = isOpen ? 'open' : 'closed';
+        const openBadge = isOpen ? 'rm-badge-open' : 'rm-badge-closed';
         const level = affluence?.niveau || 'default';
-        const levelLabel = affluence?.niveau_display || NIVEAU_LABELS[level] || 'N/A';
+        const levelLabel = getLevelLabel(level, affluence);
         const personnes = affluence?.personnes_presentes ?? '—';
         const taux = affluence?.taux_occupation ?? '—';
+        const atmCount = agency.atm_disponibles_count ?? 0;
+        const todayHours = formatTodayHours(agency);
+        const directionsUrl = getDirectionsUrl(agency);
+        const levelClass = {
+            vert: 'rm-badge-faible',
+            orange: 'rm-badge-moyenne',
+            rouge: 'rm-badge-forte',
+        }[level] || 'rm-badge-closed';
 
-        return `
-            <div class="agency-popup">
-                <div class="agency-popup-title">${escapeHtml(agency.nom)}</div>
-                <ul class="agency-popup-list">
-                    <li>
-                        <span>Adresse</span>
-                        <span>${escapeHtml(formatAddress(agency))}</span>
-                    </li>
-                    <li>
-                        <span>Statut</span>
-                        <span class="agency-popup-badge ${openClass}">${openLabel}</span>
-                    </li>
-                    <li>
-                        <span>Personnes</span>
-                        <span>${personnes}</span>
-                    </li>
-                    <li>
-                        <span>Occupation</span>
-                        <span>${taux}${taux !== '—' ? ' %' : ''}</span>
-                    </li>
-                    <li>
-                        <span>Niveau</span>
-                        <span class="agency-popup-badge level-${level}">${escapeHtml(levelLabel)}</span>
-                    </li>
-                </ul>
-                <a
-                    href="/agencies/${agency.id}/"
-                    class="btn btn-sm btn-primary w-100"
-                >
-                    Voir les détails
+        const actions = `
+            <div class="agency-panel-actions">
+                <a href="/agencies/${agency.id}/" class="rm-btn rm-btn-primary rm-btn-sm">
+                    <i class="bi bi-file-text"></i> Détails
                 </a>
+                <a href="${directionsUrl}" target="_blank" rel="noopener" class="rm-btn rm-btn-secondary rm-btn-sm">
+                    <i class="bi bi-signpost-split"></i> Me guider
+                </a>
+            </div>`;
+
+        const rows = `
+            <div class="agency-panel-row"><i class="bi bi-geo-alt"></i><span>${escapeHtml(formatAddress(agency))}</span></div>
+            <div class="agency-panel-row"><i class="bi bi-door-open"></i><span class="rm-badge ${openBadge}">${openLabel}</span></div>
+            <div class="agency-panel-row"><i class="bi bi-people"></i><span>${personnes} personnes</span></div>
+            <div class="agency-panel-row"><i class="bi bi-graph-up"></i><span>${taux}${taux !== '—' ? ' %' : ''} occupation</span></div>
+            <div class="agency-panel-row"><i class="bi bi-traffic-light"></i><span class="rm-badge ${levelClass}">${escapeHtml(levelLabel)}</span></div>
+            <div class="agency-panel-row"><i class="bi bi-credit-card-2-front"></i><span>${atmCount} ATM disponibles</span></div>
+            <div class="agency-panel-row"><i class="bi bi-clock"></i><span>${escapeHtml(todayHours)}</span></div>`;
+
+        if (compact) {
+            return `<div class="agency-popup-premium">
+                <h3 class="agency-popup-name">${escapeHtml(agency.nom)}</h3>
+                <div class="agency-panel-rows">${rows}</div>${actions}
+            </div>`;
+        }
+
+        return `<div class="agency-sidebar-content-inner">
+            <div class="agency-sidebar-hero">
+                <div class="agency-sidebar-icon"><i class="bi bi-building"></i></div>
+                <h3>${escapeHtml(agency.nom)}</h3>
+                <p class="rm-text-muted small mb-0">${escapeHtml(agency.code)}</p>
             </div>
-        `;
+            <div class="agency-panel-rows">${rows}</div>${actions}
+        </div>`;
+    }
+
+    function buildPopupContent(agency) {
+        return buildAgencyPanelHtml(agency, true);
+    }
+
+    function showAgencySidebar(agency) {
+        selectedAgencyId = agency.id;
+        const sidebar = $('#agency-sidebar');
+        const content = $('#agency-sidebar-content');
+        if (!sidebar || !content) return;
+        content.innerHTML = buildAgencyPanelHtml(agency, false);
+        sidebar.classList.add('is-open');
+        sidebar.setAttribute('aria-hidden', 'false');
+    }
+
+    function hideAgencySidebar() {
+        selectedAgencyId = null;
+        const sidebar = $('#agency-sidebar');
+        if (!sidebar) return;
+        sidebar.classList.remove('is-open');
+        sidebar.setAttribute('aria-hidden', 'true');
+    }
+
+    function refreshAgencyViews(agency) {
+        const marker = agencyMarkers.get(agency.id);
+        if (marker) {
+            marker.setPopupContent(buildPopupContent(agency));
+        }
+        if (selectedAgencyId === agency.id) {
+            const content = $('#agency-sidebar-content');
+            if (content) content.innerHTML = buildAgencyPanelHtml(agency, false);
+        }
+    }
+
+    function selectAgency(agencyId) {
+        const agency = agencies.find((a) => a.id === agencyId);
+        if (!agency) return;
+        const marker = agencyMarkers.get(agencyId);
+        if (marker) {
+            map.flyTo(marker.getLatLng(), 16, { duration: 0.8 });
+        }
+        showAgencySidebar(agency);
+        if (window.innerWidth < 992 && marker) {
+            marker.openPopup();
+        }
+    }
+
+    function passesFilter(agencyId) {
+        if (activeFilter === 'all') return true;
+        return getAffluenceLevel(agencyId) === activeFilter;
     }
 
     function escapeHtml(text) {
@@ -266,12 +363,16 @@ const RawMapApp = (() => {
             const level = getAffluenceLevel(agency.id);
             const marker = L.marker([agency.latitude, agency.longitude], {
                 icon: createMarkerIcon('agency', level),
+                opacity: passesFilter(agency.id) ? 1 : 0.25,
             });
 
             marker.bindPopup(buildPopupContent(agency), {
-                maxWidth: 300,
-                minWidth: 220,
+                maxWidth: 360,
+                minWidth: 280,
+                className: 'agency-popup-wrapper',
             });
+
+            marker.on('click', () => selectAgency(agency.id));
 
             marker.addTo(agencyLayerGroup);
             agencyMarkers.set(agency.id, marker);
@@ -381,13 +482,7 @@ const RawMapApp = (() => {
     }
 
     function focusAgency(agencyId) {
-        const marker = agencyMarkers.get(agencyId);
-        if (!marker) {
-            return;
-        }
-
-        map.flyTo(marker.getLatLng(), 16, { duration: 1 });
-        marker.openPopup();
+        selectAgency(agencyId);
     }
 
     /* ------------------------------------------------------------------ */
@@ -405,7 +500,8 @@ const RawMapApp = (() => {
 
         const level = affluenceData?.niveau || 'default';
         marker.setIcon(createMarkerIcon('agency', level));
-        marker.setPopupContent(buildPopupContent(agency));
+        marker.setOpacity(passesFilter(agencyId) ? 1 : 0.25);
+        refreshAgencyViews(agency);
     }
 
     function initAffluenceSync() {
@@ -439,9 +535,20 @@ const RawMapApp = (() => {
         });
 
         document.addEventListener('click', (event) => {
-            if (!event.target.closest('.map-controls')) {
+            if (!event.target.closest('.map-header')) {
                 hideSearchResults();
             }
+        });
+
+        $('#sidebar-close')?.addEventListener('click', hideAgencySidebar);
+
+        document.querySelectorAll('#affluence-filters .rm-chip').forEach((chip) => {
+            chip.addEventListener('click', () => {
+                document.querySelectorAll('#affluence-filters .rm-chip').forEach((c) => c.classList.remove('active'));
+                chip.classList.add('active');
+                activeFilter = chip.dataset.filter || 'all';
+                renderAgencyMarkers();
+            });
         });
     }
 

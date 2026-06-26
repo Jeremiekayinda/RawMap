@@ -11,6 +11,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/', include('apps.api.urls')),
     path('dashboard/', include('apps.affluence.urls')),
+    path('', include('apps.accounts.urls')),
     path('', include('apps.core.urls')),
 ]
 

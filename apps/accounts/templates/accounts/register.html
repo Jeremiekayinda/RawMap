@@ -1,0 +1,100 @@
+{% extends "accounts/base_login.html" %}
+{% load static %}
+
+{% block title %}Inscription — RawMap{% endblock %}
+
+{% block auth_form_content %}
+<header class="rawmap-login-header">
+    <h2 class="rawmap-login-title">Créer un compte</h2>
+    <p class="rawmap-login-subtitle">Rejoignez RawMap et accédez à toutes les fonctionnalités.</p>
+</header>
+
+{% include "accounts/includes/auth_messages.html" %}
+
+<form method="post" action="{% url 'accounts:register' %}" novalidate class="rawmap-login-form" id="rawmap-register-form">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+    <div class="alert alert-danger rawmap-alert" role="alert">
+        {% for error in form.non_field_errors %}
+        <div><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="row g-3">
+        <div class="col-sm-6 rawmap-field mb-0">
+            <label for="{{ form.first_name.id_for_label }}" class="rawmap-label">{{ form.first_name.label }}</label>
+            {{ form.first_name }}
+            {% for error in form.first_name.errors %}<div class="rawmap-field-error">{{ error }}</div>{% endfor %}
+        </div>
+        <div class="col-sm-6 rawmap-field mb-0">
+            <label for="{{ form.last_name.id_for_label }}" class="rawmap-label">{{ form.last_name.label }}</label>
+            {{ form.last_name }}
+            {% for error in form.last_name.errors %}<div class="rawmap-field-error">{{ error }}</div>{% endfor %}
+        </div>
+        <div class="col-sm-6 rawmap-field mb-0">
+            <label for="{{ form.username.id_for_label }}" class="rawmap-label">{{ form.username.label }}</label>
+            <div class="rawmap-input-wrap">
+                <i class="bi bi-at rawmap-input-icon"></i>
+                {{ form.username }}
+            </div>
+            {% for error in form.username.errors %}<div class="rawmap-field-error">{{ error }}</div>{% endfor %}
+        </div>
+        <div class="col-sm-6 rawmap-field mb-0">
+            <label for="{{ form.email.id_for_label }}" class="rawmap-label">{{ form.email.label }}</label>
+            <div class="rawmap-input-wrap">
+                <i class="bi bi-envelope rawmap-input-icon"></i>
+                {{ form.email }}
+            </div>
+            {% for error in form.email.errors %}<div class="rawmap-field-error">{{ error }}</div>{% endfor %}
+        </div>
+        <div class="col-12 rawmap-field mb-0">
+            <label for="{{ form.telephone.id_for_label }}" class="rawmap-label">{{ form.telephone.label }}</label>
+            <div class="rawmap-input-wrap">
+                <i class="bi bi-telephone rawmap-input-icon"></i>
+                {{ form.telephone }}
+            </div>
+            {% for error in form.telephone.errors %}<div class="rawmap-field-error">{{ error }}</div>{% endfor %}
+        </div>
+        <div class="col-sm-6 rawmap-field mb-0">
+            <label for="{{ form.password1.id_for_label }}" class="rawmap-label">{{ form.password1.label }}</label>
+            <div class="rawmap-input-wrap">
+                <i class="bi bi-lock rawmap-input-icon"></i>
+                {{ form.password1 }}
+                <button type="button" class="rawmap-password-toggle" data-toggle-password="register-password1" aria-label="Afficher le mot de passe">
+                    <i class="bi bi-eye"></i>
+                </button>
+            </div>
+            {% for error in form.password1.errors %}<div class="rawmap-field-error">{{ error }}</div>{% endfor %}
+        </div>
+        <div class="col-sm-6 rawmap-field mb-0">
+            <label for="{{ form.password2.id_for_label }}" class="rawmap-label">{{ form.password2.label }}</label>
+            <div class="rawmap-input-wrap">
+                <i class="bi bi-shield-lock rawmap-input-icon"></i>
+                {{ form.password2 }}
+                <button type="button" class="rawmap-password-toggle" data-toggle-password="register-password2" aria-label="Afficher la confirmation">
+                    <i class="bi bi-eye"></i>
+                </button>
+            </div>
+            {% for error in form.password2.errors %}<div class="rawmap-field-error">{{ error }}</div>{% endfor %}
+        </div>
+    </div>
+
+    <button type="submit" class="btn rawmap-btn-primary w-100 mt-4">
+        <span>S'inscrire</span>
+        <i class="bi bi-arrow-right"></i>
+    </button>
+
+    <div class="rawmap-divider"><span>ou</span></div>
+
+    <a href="{% url 'accounts:login' %}" class="btn rawmap-btn-secondary w-100">
+        <i class="bi bi-box-arrow-in-right"></i>
+        <span>Se connecter</span>
+    </a>
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/accounts-register.js' %}"></script>
+{% endblock %}

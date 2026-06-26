@@ -5,7 +5,6 @@ Tests unitaires — API REST v1.
 from decimal import Decimal
 
 from django.contrib.auth.models import User
-from django.contrib.gis.geos import Point
 from django.test import override_settings
 from django.urls import reverse
 from rest_framework import status
@@ -33,7 +32,7 @@ class AgenceAPITests(APITestCase):
             province='Kinshasa',
             telephone='0812345678',
             email='api@rawbank.cd',
-            localisation=Point(15.32, -4.32, srid=4326),
+            latitude=-4.32, longitude=15.32,
             capacite_max=100,
             statut=StatutAgence.ACTIF,
         )
@@ -83,14 +82,14 @@ class ATMAPITests(APITestCase):
             province='Kinshasa',
             telephone='0812345679',
             email='atm@rawbank.cd',
-            localisation=Point(15.33, -4.33, srid=4326),
+            latitude=-4.33, longitude=15.33,
             capacite_max=50,
         )
         self.atm = ATM.objects.create(
             agence=self.agence,
             nom='DAB API',
             code_atm='ATM-API-001',
-            localisation=Point(15.3301, -4.3301, srid=4326),
+            latitude=-4.3301, longitude=15.3301,
             statut=StatutATM.DISPONIBLE,
             cash_disponible=True,
         )
@@ -123,7 +122,7 @@ class AffluenceAPITests(APITestCase):
             province='Kinshasa',
             telephone='0812345680',
             email='aff@rawbank.cd',
-            localisation=Point(15.34, -4.34, srid=4326),
+            latitude=-4.34, longitude=15.34,
             capacite_max=100,
         )
         AffluenceService.update_affluence(self.agence, 40)
@@ -160,7 +159,7 @@ class IoTUpdateAPITests(APITestCase):
             province='Kinshasa',
             telephone='0812345681',
             email='iot@rawbank.cd',
-            localisation=Point(15.35, -4.35, srid=4326),
+            latitude=-4.35, longitude=15.35,
             capacite_max=100,
         )
         self.esp32 = ESP32.objects.create(
@@ -241,7 +240,7 @@ class SimulatorAPITests(APITestCase):
             province='Kinshasa',
             telephone='0812345690',
             email='sim@rawbank.cd',
-            localisation=Point(15.32, -4.32, srid=4326),
+            latitude=-4.32, longitude=15.32,
             capacite_max=5,
         )
 

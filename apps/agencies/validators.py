@@ -68,3 +68,21 @@ def validate_horaires(heure_ouverture, heure_fermeture):
             ),
             code='horaires_invalides',
         )
+
+
+def validate_latitude(value):
+    """Valide une latitude WGS84 (-90 à 90)."""
+    if value < -90 or value > 90:
+        raise ValidationError(
+            _('Latitude invalide : doit être comprise entre -90 et 90.'),
+            code='latitude_invalide',
+        )
+
+
+def validate_longitude(value):
+    """Valide une longitude WGS84 (-180 à 180)."""
+    if value < -180 or value > 180:
+        raise ValidationError(
+            _('Longitude invalide : doit être comprise entre -180 et 180.'),
+            code='longitude_invalide',
+        )

@@ -1,11 +1,12 @@
 """
 Vues de l'application core.
 
-Pages publiques : accueil (carte) et détail d'agence.
+Pages authentifiées : accueil (carte) et détail d'agence.
 """
 
 import json
 
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render
 
 from apps.agencies.models import Agence
@@ -14,6 +15,7 @@ from apps.atm.models import ATM
 from apps.core.utils.agency_helpers import is_agency_open, sort_horaires
 
 
+@login_required(login_url='/login/')
 def home(request):
     """
     Page d'accueil avec carte Leaflet des agences Rawbank.
@@ -24,6 +26,7 @@ def home(request):
     return render(request, 'core/home.html', context)
 
 
+@login_required(login_url='/login/')
 def agency_detail(request, pk):
     """
     Page de détail d'une agence bancaire.
@@ -59,8 +62,8 @@ def agency_detail(request, pk):
         if part
     )
 
-    latitude = agence.localisation.y
-    longitude = agence.localisation.x
+    latitude = float(agence.latitude)
+    longitude = float(agence.longitude)
 
     context = {
         'page_title': f'{agence.nom} — RawMap',

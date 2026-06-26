@@ -13,9 +13,9 @@ from apps.affluence.validators import validate_personnes_presentes
 class NiveauAffluence(models.TextChoices):
     """Niveaux d'alerte basés sur le taux d'occupation."""
 
-    VERT = 'vert', _('Vert')
-    ORANGE = 'orange', _('Orange')
-    ROUGE = 'rouge', _('Rouge')
+    VERT = 'vert', _('Faible')
+    ORANGE = 'orange', _('Moyenne')
+    ROUGE = 'rouge', _('Forte')
 
 
 class Affluence(models.Model):

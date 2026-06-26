@@ -1,0 +1,560 @@
+/**
+ * RawMap — Page de connexion premium
+ * Inspiré de l'identité Rawbank (noir, or, élégance)
+ */
+
+:root {
+    --rawmap-black: var(--rm-black);
+    --rawmap-white: var(--rm-white);
+    --rawmap-gold: var(--rm-gold);
+    --rawmap-gold-hover: var(--rm-gold-hover);
+    --rawmap-gold-soft: var(--rm-gold-soft);
+    --rawmap-gray-bg: var(--rm-gray-50);
+    --rawmap-gray-border: var(--rm-gray-200);
+    --rawmap-gray-text: var(--rm-gray-500);
+    --rawmap-text: var(--rm-text);
+    --rawmap-radius: var(--rm-radius);
+    --rawmap-radius-lg: var(--rm-radius-lg);
+    --rawmap-shadow: var(--rm-shadow-lg);
+    --rawmap-transition: var(--rm-transition);
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body.rawmap-login-page {
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+    background: var(--rawmap-gray-bg);
+    color: var(--rawmap-text);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ------------------------------------------------------------------ */
+/* Shell                                                               */
+/* ------------------------------------------------------------------ */
+.rawmap-login-shell {
+    display: flex;
+    min-height: 100vh;
+    animation: rmFadeIn 0.6s ease-out;
+}
+
+/* ------------------------------------------------------------------ */
+/* Panneau gauche                                                      */
+/* ------------------------------------------------------------------ */
+.rawmap-login-brand {
+    position: relative;
+    flex: 1 1 48%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 3rem 3.5rem;
+    background: var(--rawmap-black);
+    color: var(--rawmap-white);
+    overflow: hidden;
+}
+
+.rawmap-brand-glow {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    filter: blur(80px);
+}
+
+.rawmap-brand-glow--top {
+    width: 320px;
+    height: 320px;
+    top: -80px;
+    right: -60px;
+    background: radial-gradient(circle, rgba(246, 177, 0, 0.25) 0%, transparent 70%);
+}
+
+.rawmap-brand-glow--bottom {
+    width: 400px;
+    height: 400px;
+    bottom: -120px;
+    left: -100px;
+    background: radial-gradient(circle, rgba(246, 177, 0, 0.12) 0%, transparent 70%);
+}
+
+.rawmap-brand-content {
+    position: relative;
+    z-index: 2;
+    max-width: 480px;
+}
+
+.rawmap-brand-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+    margin-bottom: 2.5rem;
+}
+
+.rawmap-brand-wordmark {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    white-space: nowrap;
+}
+
+.rawmap-word-raw {
+    color: var(--rawmap-white);
+}
+
+.rawmap-word-map {
+    color: var(--rawmap-gold);
+}
+
+.rawmap-logo-img {
+    height: 40px;
+    width: auto;
+}
+
+.rawmap-brand-tagline {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.45);
+    letter-spacing: 0.02em;
+    font-weight: 400;
+}
+
+.rawmap-brand-title {
+    font-size: clamp(1.75rem, 3vw, 2.35rem);
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 1.25rem;
+}
+
+.rawmap-highlight {
+    display: block;
+    color: var(--rawmap-gold);
+    margin-top: 0.25rem;
+}
+
+.rawmap-brand-lead {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.72);
+    margin-bottom: 2rem;
+}
+
+.rawmap-brand-features {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.rawmap-brand-features li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.55rem 0;
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.88);
+    transition: transform var(--rawmap-transition);
+}
+
+.rawmap-brand-features li i {
+    color: var(--rawmap-gold);
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.rawmap-brand-features li:hover {
+    transform: translateX(4px);
+}
+
+/* Illustration graphique */
+.rawmap-brand-visual {
+    position: absolute;
+    bottom: 5rem;
+    right: 2rem;
+    width: 200px;
+    height: 200px;
+    z-index: 1;
+    opacity: 0.9;
+}
+
+.rawmap-visual-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid rgba(246, 177, 0, 0.2);
+}
+
+.rawmap-visual-ring--1 {
+    inset: 0;
+    animation: rawmapPulse 4s ease-in-out infinite;
+}
+
+.rawmap-visual-ring--2 {
+    inset: 24px;
+    border-color: rgba(246, 177, 0, 0.35);
+    animation: rawmapPulse 4s ease-in-out infinite 0.5s;
+}
+
+.rawmap-visual-mark {
+    position: absolute;
+    inset: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.rawmap-visual-mark span {
+    display: block;
+    width: 14px;
+    height: 36px;
+    background: linear-gradient(180deg, var(--rawmap-gold) 0%, #c89200 100%);
+    border-radius: 8px;
+    transform: skewX(-8deg);
+    box-shadow: 0 0 24px rgba(246, 177, 0, 0.45);
+}
+
+.rawmap-visual-mark span:nth-child(2) {
+    height: 48px;
+}
+
+.rawmap-visual-mark span:nth-child(3) {
+    height: 32px;
+}
+
+@keyframes rawmapPulse {
+    0%, 100% { transform: scale(1); opacity: 0.6; }
+    50% { transform: scale(1.05); opacity: 1; }
+}
+
+.rawmap-brand-footer {
+    position: relative;
+    z-index: 2;
+    margin: 0;
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+/* ------------------------------------------------------------------ */
+/* Panneau droit                                                       */
+/* ------------------------------------------------------------------ */
+.rawmap-login-main {
+    flex: 1 1 52%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.5rem;
+    background: var(--rawmap-gray-bg);
+}
+
+.rawmap-login-card {
+    width: 100%;
+    max-width: 440px;
+    background: var(--rawmap-white);
+    border-radius: var(--rawmap-radius-lg);
+    padding: 2.5rem 2.25rem;
+    box-shadow: var(--rawmap-shadow);
+    border: 1px solid rgba(17, 17, 17, 0.04);
+    animation: rawmapCardIn 0.5s ease-out 0.15s both;
+}
+
+@keyframes rawmapCardIn {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.rawmap-login-header {
+    margin-bottom: 1.75rem;
+}
+
+.rawmap-login-title {
+    font-size: 1.85rem;
+    font-weight: 700;
+    margin: 0 0 0.35rem;
+    color: var(--rawmap-black);
+}
+
+.rawmap-login-subtitle {
+    margin: 0;
+    color: var(--rawmap-gray-text);
+    font-size: 0.95rem;
+}
+
+/* ------------------------------------------------------------------ */
+/* Formulaire                                                          */
+/* ------------------------------------------------------------------ */
+.rawmap-login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.rawmap-field {
+    margin-bottom: 1rem;
+}
+
+.rawmap-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 0.45rem;
+    color: var(--rawmap-text);
+}
+
+.rawmap-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.rawmap-input-icon {
+    position: absolute;
+    left: 1rem;
+    color: var(--rawmap-gray-text);
+    font-size: 1.05rem;
+    pointer-events: none;
+    transition: color var(--rawmap-transition);
+    z-index: 1;
+}
+
+.rawmap-input-wrap .rawmap-input {
+    width: 100%;
+    padding: 0.85rem 1rem 0.85rem 2.75rem;
+    font-family: inherit;
+    font-size: 0.95rem;
+    color: var(--rawmap-text);
+    background: var(--rawmap-white);
+    border: 1.5px solid var(--rawmap-gray-border);
+    border-radius: var(--rawmap-radius);
+    transition:
+        border-color var(--rawmap-transition),
+        box-shadow var(--rawmap-transition),
+        transform var(--rawmap-transition);
+}
+
+.rawmap-input-wrap .rawmap-input-password {
+    padding-right: 3rem;
+}
+
+.rawmap-input-wrap .rawmap-input:focus {
+    outline: none;
+    border-color: var(--rawmap-gold);
+    box-shadow: 0 0 0 4px var(--rawmap-gold-soft);
+    transform: translateY(-1px);
+}
+
+.rawmap-input-wrap:focus-within .rawmap-input-icon {
+    color: var(--rawmap-gold);
+}
+
+.rawmap-password-toggle {
+    position: absolute;
+    right: 0.75rem;
+    background: none;
+    border: none;
+    padding: 0.35rem;
+    color: var(--rawmap-gray-text);
+    cursor: pointer;
+    border-radius: 8px;
+    transition: color var(--rawmap-transition), background var(--rawmap-transition);
+}
+
+.rawmap-password-toggle:hover {
+    color: var(--rawmap-gold);
+    background: var(--rawmap-gold-soft);
+}
+
+.rawmap-field-error {
+    font-size: 0.8rem;
+    color: #dc3545;
+    margin-top: 0.35rem;
+}
+
+.rawmap-form-options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.rawmap-remember .form-check-input {
+    border-color: var(--rawmap-gray-border);
+    cursor: pointer;
+}
+
+.rawmap-remember .form-check-input:checked {
+    background-color: var(--rawmap-gold);
+    border-color: var(--rawmap-gold);
+}
+
+.rawmap-remember .form-check-label {
+    font-size: 0.875rem;
+    color: var(--rawmap-gray-text);
+    cursor: pointer;
+}
+
+.rawmap-link {
+    color: var(--rawmap-gold);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: color var(--rawmap-transition);
+}
+
+.rawmap-link:hover {
+    color: var(--rawmap-gold-hover);
+    text-decoration: underline;
+}
+
+/* Boutons */
+.rawmap-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.9rem 1.5rem;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--rawmap-black);
+    background: var(--rawmap-gold);
+    border: none;
+    border-radius: var(--rawmap-radius);
+    cursor: pointer;
+    transition:
+        background var(--rawmap-transition),
+        transform var(--rawmap-transition),
+        box-shadow var(--rawmap-transition);
+}
+
+.rawmap-btn-primary:hover {
+    background: var(--rawmap-gold-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(246, 177, 0, 0.35);
+    color: var(--rawmap-black);
+}
+
+.rawmap-btn-primary:active {
+    transform: translateY(0);
+}
+
+.rawmap-btn-primary i {
+    transition: transform var(--rawmap-transition);
+}
+
+.rawmap-btn-primary:hover i {
+    transform: translateX(4px);
+}
+
+.rawmap-divider {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1.25rem 0;
+    color: var(--rawmap-gray-text);
+    font-size: 0.85rem;
+}
+
+.rawmap-divider::before,
+.rawmap-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--rawmap-gray-border);
+}
+
+.rawmap-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.85rem 1.5rem;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--rawmap-gold);
+    background: transparent;
+    border: 1.5px solid var(--rawmap-gold);
+    border-radius: var(--rawmap-radius);
+    text-decoration: none;
+    transition:
+        background var(--rawmap-transition),
+        color var(--rawmap-transition),
+        transform var(--rawmap-transition);
+}
+
+.rawmap-btn-secondary:hover {
+    background: var(--rawmap-gold-soft);
+    color: var(--rawmap-gold-hover);
+    transform: translateY(-1px);
+}
+
+.rawmap-legal {
+    margin: 1.5rem 0 0;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    text-align: center;
+    color: var(--rawmap-gray-text);
+}
+
+.rawmap-alert {
+    border-radius: var(--rawmap-radius);
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+    border: none;
+}
+
+/* ------------------------------------------------------------------ */
+/* Responsive                                                          */
+/* ------------------------------------------------------------------ */
+@media (max-width: 991.98px) {
+    .rawmap-login-shell {
+        flex-direction: column;
+    }
+
+    .rawmap-login-brand {
+        flex: none;
+        padding: 2.5rem 1.75rem;
+        min-height: auto;
+    }
+
+    .rawmap-brand-visual {
+        display: none;
+    }
+
+    .rawmap-brand-title {
+        font-size: 1.5rem;
+    }
+
+    .rawmap-brand-features {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.25rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .rawmap-login-card {
+        padding: 2rem 1.5rem;
+        border-radius: var(--rawmap-radius);
+    }
+
+    .rawmap-brand-features {
+        grid-template-columns: 1fr;
+    }
+
+    .rawmap-form-options {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}

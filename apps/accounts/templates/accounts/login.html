@@ -1,0 +1,91 @@
+{% extends "accounts/base_login.html" %}
+
+{% block title %}Connexion — RawMap{% endblock %}
+
+{% block auth_form_content %}
+<header class="rawmap-login-header">
+    <h2 class="rawmap-login-title">Connexion</h2>
+    <p class="rawmap-login-subtitle">Connectez-vous à votre espace RawMap.</p>
+</header>
+
+{% include "accounts/includes/auth_messages.html" %}
+
+<form method="post" action="{% url 'accounts:login' %}" novalidate class="rawmap-login-form" id="rawmap-login-form">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+    <div class="alert alert-danger rawmap-alert" role="alert">
+        {% for error in form.non_field_errors %}
+        <div><i class="bi bi-exclamation-circle me-1"></i>{{ error }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="rawmap-field">
+        <label for="{{ form.identifier.id_for_label }}" class="rawmap-label">
+            Nom d'utilisateur ou Email
+        </label>
+        <div class="rawmap-input-wrap">
+            <i class="bi bi-person rawmap-input-icon"></i>
+            {{ form.identifier }}
+        </div>
+        {% for error in form.identifier.errors %}
+        <div class="rawmap-field-error">{{ error }}</div>
+        {% endfor %}
+    </div>
+
+    <div class="rawmap-field">
+        <label for="{{ form.password.id_for_label }}" class="rawmap-label">
+            Mot de passe
+        </label>
+        <div class="rawmap-input-wrap">
+            <i class="bi bi-lock rawmap-input-icon"></i>
+            {{ form.password }}
+            <button
+                type="button"
+                class="rawmap-password-toggle"
+                id="toggle-password"
+                aria-label="Afficher ou masquer le mot de passe"
+            >
+                <i class="bi bi-eye" id="toggle-password-icon"></i>
+            </button>
+        </div>
+        {% for error in form.password.errors %}
+        <div class="rawmap-field-error">{{ error }}</div>
+        {% endfor %}
+    </div>
+
+    <div class="rawmap-form-options">
+        <div class="form-check rawmap-remember">
+            {{ form.remember_me }}
+            <label class="form-check-label" for="{{ form.remember_me.id_for_label }}">
+                {{ form.remember_me.label }}
+            </label>
+        </div>
+        <a href="#" class="rawmap-link rawmap-link-forgot" title="Bientôt disponible">
+            Mot de passe oublié ?
+        </a>
+    </div>
+
+    <button type="submit" class="btn rawmap-btn-primary w-100">
+        <span>Se connecter</span>
+        <i class="bi bi-arrow-right"></i>
+    </button>
+
+    <div class="rawmap-divider">
+        <span>ou</span>
+    </div>
+
+    <a href="{% url 'accounts:register' %}" class="btn rawmap-btn-secondary w-100">
+        <i class="bi bi-person-plus"></i>
+        <span>Créer un compte</span>
+    </a>
+
+    <p class="rawmap-legal">
+        En continuant, vous acceptez nos
+        <a href="#" class="rawmap-link">Conditions d'utilisation</a>
+        et
+        <a href="#" class="rawmap-link">Politique de confidentialité</a>.
+    </p>
+</form>
+{% endblock %}

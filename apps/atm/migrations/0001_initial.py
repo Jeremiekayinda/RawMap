@@ -1,7 +1,7 @@
 # Generated manually for RawMap — application atm
 
 import apps.atm.validators
-import django.contrib.gis.db.models.fields
+import apps.agencies.validators
 from django.db import migrations, models
 import django.db.models.deletion
 
@@ -39,12 +39,23 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
-                    'localisation',
-                    django.contrib.gis.db.models.fields.PointField(
-                        geography=True,
-                        help_text='Coordonnées GPS (longitude, latitude) — SRID 4326.',
-                        srid=4326,
-                        verbose_name='localisation',
+                    'latitude',
+                    models.DecimalField(
+                        decimal_places=6,
+                        help_text='Latitude WGS84 (ex. -4.321700).',
+                        max_digits=9,
+                        validators=[apps.agencies.validators.validate_latitude],
+                        verbose_name='latitude',
+                    ),
+                ),
+                (
+                    'longitude',
+                    models.DecimalField(
+                        decimal_places=6,
+                        help_text='Longitude WGS84 (ex. 15.322200).',
+                        max_digits=9,
+                        validators=[apps.agencies.validators.validate_longitude],
+                        verbose_name='longitude',
                     ),
                 ),
                 (
@@ -113,6 +124,13 @@ class Migration(migrations.Migration):
             index=models.Index(
                 fields=['agence', 'statut'],
                 name='atm_atm_agence__7g8h9i_idx',
+            ),
+        ),
+        migrations.AddIndex(
+            model_name='atm',
+            index=models.Index(
+                fields=['latitude', 'longitude'],
+                name='atm_atm_lat_lon_idx',
             ),
         ),
     ]

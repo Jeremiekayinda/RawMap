@@ -2,7 +2,6 @@
 Tests unitaires — application agencies.
 """
 
-from django.contrib.gis.geos import Point
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
@@ -29,7 +28,7 @@ class AgenceModelTests(TestCase):
             'province': 'Kinshasa',
             'telephone': '+243812345678',
             'email': 'gombe@rawbank.cd',
-            'localisation': Point(15.3222, -4.3217, srid=4326),
+            'latitude': -4.3217, 'longitude': 15.3222,
             'capacite_max': 50,
             'description': 'Agence principale Gombe',
             'statut': StatutAgence.ACTIF,
@@ -65,7 +64,7 @@ class HoraireModelTests(TestCase):
             province='Kinshasa',
             telephone='0812345678',
             email='test@rawbank.cd',
-            localisation=Point(15.3, -4.3, srid=4326),
+            latitude=-4.3, longitude=15.3,
             capacite_max=30,
         )
 
@@ -125,7 +124,7 @@ class ServiceModelTests(TestCase):
             province='Kinshasa',
             telephone='0812345679',
             email='test2@rawbank.cd',
-            localisation=Point(15.3, -4.3, srid=4326),
+            latitude=-4.3, longitude=15.3,
             capacite_max=20,
         )
         service_a = Service.objects.create(nom='Virement')
@@ -179,7 +178,7 @@ class AgenceServiceTests(TestCase):
             province='Kinshasa',
             telephone='0811111111',
             email='active@rawbank.cd',
-            localisation=Point(15.32, -4.32, srid=4326),
+            latitude=-4.32, longitude=15.32,
             capacite_max=40,
             statut=StatutAgence.ACTIF,
         )
@@ -192,7 +191,7 @@ class AgenceServiceTests(TestCase):
             province='Kinshasa',
             telephone='0822222222',
             email='inactive@rawbank.cd',
-            localisation=Point(15.35, -4.35, srid=4326),
+            latitude=-4.35, longitude=15.35,
             capacite_max=20,
             statut=StatutAgence.INACTIF,
         )

@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base_app.html" %}
 {% load static %}
 
 {% block title %}{{ page_title }}{% endblock %}
@@ -8,76 +8,62 @@
 {% block footer %}{% endblock %}
 
 {% block extra_css %}
-<link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-    crossorigin=""
->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 <link rel="stylesheet" href="{% static 'css/map.css' %}">
 {% endblock %}
 
 {% block content %}
 <div class="map-page">
-    {# Barre de contrôles superposée à la carte #}
-    <div class="map-controls shadow-sm">
-        <div class="container-fluid">
-            <div class="row g-2 align-items-center">
-                <div class="col-md-6 col-lg-7">
-                    <div class="input-group">
-                        <span class="input-group-text bg-white">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
-                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
-                            </svg>
-                        </span>
-                        <input
-                            type="search"
-                            id="agency-search"
-                            class="form-control"
-                            placeholder="Rechercher une agence par nom…"
-                            autocomplete="off"
-                            aria-label="Rechercher une agence"
-                        >
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-5">
-                    <div class="d-flex flex-wrap gap-2 justify-content-md-end">
-                        <button type="button" id="btn-locate" class="btn btn-primary">
-                            Me localiser
-                        </button>
-                        <div class="map-legend d-none d-md-flex align-items-center gap-2 ms-2">
-                            <span class="legend-item legend-vert">Vert</span>
-                            <span class="legend-item legend-orange">Orange</span>
-                            <span class="legend-item legend-rouge">Rouge</span>
-                        </div>
-                    </div>
-                </div>
+    <header class="map-header rm-card-glass">
+        <div class="map-header-inner">
+            <div class="map-search-wrap">
+                <i class="bi bi-search map-search-icon"></i>
+                <input
+                    type="search"
+                    id="agency-search"
+                    class="map-search-input"
+                    placeholder="Rechercher une agence Rawbank…"
+                    autocomplete="off"
+                    aria-label="Rechercher une agence"
+                >
+                <div id="search-results" class="search-results d-none" role="listbox"></div>
             </div>
-            <div id="search-results" class="search-results d-none" role="listbox" aria-label="Résultats de recherche"></div>
+            <div class="map-header-actions">
+                <div class="rm-filter-chips" id="affluence-filters">
+                    <button type="button" class="rm-chip active" data-filter="all">Tous</button>
+                    <button type="button" class="rm-chip rm-chip-faible" data-filter="vert">Faible</button>
+                    <button type="button" class="rm-chip rm-chip-moyenne" data-filter="orange">Moyenne</button>
+                    <button type="button" class="rm-chip rm-chip-forte" data-filter="rouge">Forte</button>
+                </div>
+                <button type="button" id="btn-locate" class="rm-btn rm-btn-primary rm-btn-sm">
+                    <i class="bi bi-crosshair"></i> Me localiser
+                </button>
+            </div>
         </div>
-    </div>
+    </header>
 
-    {# Carte Leaflet plein écran #}
     <div id="rawmap-map" role="application" aria-label="Carte des agences Rawbank"></div>
 
-    {# Indicateur de chargement #}
-    <div id="map-loading" class="map-loading">
-        <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Chargement…</span>
+    <aside id="agency-sidebar" class="agency-sidebar" aria-hidden="true">
+        <div class="agency-sidebar-header">
+            <h2 class="agency-sidebar-title">Agence sélectionnée</h2>
+            <button type="button" id="sidebar-close" class="agency-sidebar-close" aria-label="Fermer">
+                <i class="bi bi-x-lg"></i>
+            </button>
         </div>
-        <p class="mt-2 mb-0 small text-muted">Chargement des agences…</p>
+        <div id="agency-sidebar-content" class="agency-sidebar-body"></div>
+    </aside>
+
+    <div id="map-loading" class="map-loading">
+        <div class="rm-spinner"></div>
+        <p class="mb-0 small rm-text-muted">Chargement des agences…</p>
     </div>
 
-    {# Message d'erreur #}
-    <div id="map-error" class="map-error alert alert-danger d-none" role="alert"></div>
+    <div id="map-error" class="map-error rm-alert alert alert-danger d-none" role="alert"></div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
-<script
-    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-    crossorigin=""
-></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <script src="{% static 'js/map.js' %}"></script>
 {% endblock %}

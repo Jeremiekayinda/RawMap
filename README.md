@@ -2,7 +2,7 @@
 
 Application Web professionnelle permettant aux clients de **Rawbank** de localiser les agences et DAB (ATM), de connaître leur disponibilité et leur niveau d'affluence grâce à un système IoT basé sur ESP32.
 
-> **Phase actuelle :** architecture de base uniquement — aucune fonctionnalité métier, modèle, API ou interface fonctionnelle n'est implémentée.
+> **Phase actuelle :** MVP fonctionnel — PostgreSQL standard (sans PostGIS/GDAL). La géolocalisation utilise `latitude`/`longitude` et un calcul Haversine côté serveur.
 
 ---
 
@@ -11,7 +11,7 @@ Application Web professionnelle permettant aux clients de **Rawbank** de localis
 RawMap est structuré comme une application Django modulaire, prête à accueillir les développements futurs :
 
 - Gestion des comptes utilisateurs (`accounts`)
-- Localisation géographique des agences (`agencies`) via GeoDjango / PostGIS
+- Localisation géographique des agences (`agencies`) via champs `latitude` / `longitude`
 - Gestion des DAB (`atm`)
 - Suivi de l'affluence (`affluence`)
 - Intégration IoT ESP32 (`iot`)
@@ -29,7 +29,7 @@ RawMap est structuré comme une application Django modulaire, prête à accueill
 | Langage | Python 3.13+ |
 | Framework Web | Django 6.x |
 | API | Django REST Framework |
-| Géolocalisation | GeoDjango, PostGIS |
+| Géolocalisation | DecimalField lat/lng + Haversine (PostGIS optionnel ultérieurement) |
 | Base de données | PostgreSQL |
 | Cartographie (frontend) | Leaflet.js *(phases suivantes)* |
 | Interface | Bootstrap 5, HTML5, CSS3, JavaScript ES6 |
@@ -40,10 +40,7 @@ RawMap est structuré comme une application Django modulaire, prête à accueill
 ## Prérequis
 
 - Python 3.13 ou supérieur
-- PostgreSQL 14+ avec extension **PostGIS**
-- Bibliothèques GDAL/GEOS (requises par GeoDjango)
-  - **Windows :** installer [OSGeo4W](https://trac.osgeo.org/osgeo4w/) et configurer `GDAL_LIBRARY_PATH` / `GEOS_LIBRARY_PATH` dans `.env`
-  - **Linux :** `sudo apt install gdal-bin libgdal-dev python3-gdal`
+- PostgreSQL 14+ (extension PostGIS **non requise** pour le MVP)
 
 ---
 
@@ -99,21 +96,19 @@ GRANT ALL PRIVILEGES ON DATABASE rawmap TO rawmap_user;
 
 ---
 
-## Activation de PostGIS
+## PostGIS (optionnel — production future)
 
-Se connecter à la base `rawmap` :
+Pour réactiver GeoDjango et PostGIS plus tard :
+
+1. Installer GDAL/GEOS ([OSGeo4W](https://trac.osgeo.org/osgeo4w/) sur Windows)
+2. Activer l'extension dans PostgreSQL :
 
 ```sql
 \c rawmap
 CREATE EXTENSION IF NOT EXISTS postgis;
-CREATE EXTENSION IF NOT EXISTS postgis_topology;
 ```
 
-Vérifier l'installation :
-
-```sql
-SELECT PostGIS_Version();
-```
+3. Configurer `USE_GEODJANGO=True`, `django.contrib.gis` et `postgis` dans `config/settings/base.py`
 
 ---
 
@@ -148,7 +143,7 @@ RawMap/
 │       └── production.py       # Production
 ├── apps/                       # Applications métier
 │   ├── accounts/               # Comptes utilisateurs
-│   ├── agencies/               # Agences bancaires (GeoDjango)
+│   ├── agencies/               # Agences bancaires (lat/lng)
 │   ├── atm/                    # DAB (ATM)
 │   ├── affluence/              # Niveaux d'affluence
 │   ├── iot/                    # Capteurs ESP32
@@ -187,13 +182,13 @@ Chaque application contient les dossiers préparés pour les phases suivantes :
 
 ---
 
-## Prochaines phases
+## Fonctionnalités implémentées
 
 - Modèles de données (agences, DAB, capteurs IoT, affluence)
-- Endpoints API REST
+- Endpoints API REST v1
 - Cartographie Leaflet.js
-- Authentification et tableau de bord
-- Intégration ESP32
+- Simulateur d'affluence (staff)
+- Page détail agence avec historique Chart.js
 
 ---
 

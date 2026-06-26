@@ -24,14 +24,6 @@ class ATMSerializer(serializers.ModelSerializer):
         source='agence.code',
         read_only=True,
     )
-    latitude = serializers.FloatField(
-        source='localisation.y',
-        read_only=True,
-    )
-    longitude = serializers.FloatField(
-        source='localisation.x',
-        read_only=True,
-    )
     est_operational = serializers.BooleanField(read_only=True)
 
     class Meta:
@@ -43,7 +35,6 @@ class ATMSerializer(serializers.ModelSerializer):
             'agence_code',
             'nom',
             'code_atm',
-            'localisation',
             'latitude',
             'longitude',
             'statut',

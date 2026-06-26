@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base_app.html" %}
 {% load static %}
 
 {% block title %}{{ page_title }}{% endblock %}
@@ -14,45 +14,38 @@
 {% endblock %}
 
 {% block content %}
-<div class="agency-detail-page py-4">
-    <div class="container">
-        {# Fil d'Ariane #}
-        <nav aria-label="breadcrumb" class="mb-3">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Carte</a></li>
-                <li class="breadcrumb-item active" aria-current="page">{{ agence.nom }}</li>
-            </ol>
-        </nav>
-
-        <header class="agency-detail-header mb-4">
-            <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
-                <div>
-                    <h1 class="h2 mb-1">{{ agence.nom }}</h1>
-                    <p class="text-muted mb-0">{{ agence.code }}</p>
-                </div>
-                <div class="d-flex flex-wrap gap-2">
-                    <a
-                        href="{{ google_maps_url }}"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="btn btn-primary"
-                    >
-                        Itinéraire
-                    </a>
-                    <a href="{% url 'core:home' %}" class="btn btn-outline-secondary">
-                        Retour à la carte
-                    </a>
-                </div>
+<div class="agency-detail-page">
+    <section class="agency-hero">
+        <div class="container agency-hero-inner">
+            <div>
+                <nav aria-label="breadcrumb" class="mb-2">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="{% url 'core:home' %}" class="text-white-50">Carte</a></li>
+                        <li class="breadcrumb-item active text-white" aria-current="page">{{ agence.nom }}</li>
+                    </ol>
+                </nav>
+                <h1>{{ agence.nom }}</h1>
+                <p class="agency-hero-code mb-0">{{ agence.code }}</p>
             </div>
-        </header>
+            <div class="agency-hero-actions">
+                <a href="{{ google_maps_url }}" target="_blank" rel="noopener" class="rm-btn rm-btn-primary">
+                    <i class="bi bi-signpost-split"></i> Me guider
+                </a>
+                <a href="{% url 'core:home' %}" class="rm-btn rm-btn-ghost">
+                    <i class="bi bi-arrow-left"></i> Retour
+                </a>
+            </div>
+        </div>
+    </section>
 
+    <div class="container pb-5">
         <div class="row g-4">
             {# Colonne informations #}
             <div class="col-lg-5">
                 {# Coordonnées #}
                 <section class="detail-card card shadow-sm mb-4">
                     <div class="card-body">
-                        <h2 class="h5 card-title">Informations</h2>
+                        <h2 class="h5 card-title"><i class="bi bi-info-circle"></i> Informations</h2>
                         <dl class="detail-dl mb-0">
                             <dt>Adresse</dt>
                             <dd>{{ adresse_complete }}</dd>
@@ -80,13 +73,13 @@
                 <section class="detail-card card shadow-sm mb-4">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h2 class="h5 card-title mb-0">Horaires</h2>
+                            <h2 class="h5 card-title mb-0"><i class="bi bi-clock"></i> Horaires</h2>
                             {% if is_open is None %}
-                                <span class="badge bg-secondary">Non renseigné</span>
+                                <span class="rm-badge rm-badge-closed">Non renseigné</span>
                             {% elif is_open %}
-                                <span class="badge bg-success">Ouverte</span>
+                                <span class="rm-badge rm-badge-open">Ouverte</span>
                             {% else %}
-                                <span class="badge bg-secondary">Fermée</span>
+                                <span class="rm-badge rm-badge-closed">Fermée</span>
                             {% endif %}
                         </div>
                         {% if horaires %}
@@ -111,7 +104,7 @@
                 {# Services #}
                 <section class="detail-card card shadow-sm mb-4">
                     <div class="card-body">
-                        <h2 class="h5 card-title">Services disponibles</h2>
+                        <h2 class="h5 card-title"><i class="bi bi-grid"></i> Services disponibles</h2>
                         {% if agence.services.all %}
                             <ul class="services-list mb-0">
                                 {% for service in agence.services.all %}
@@ -132,7 +125,7 @@
                 {# ATM #}
                 <section class="detail-card card shadow-sm mb-4">
                     <div class="card-body">
-                        <h2 class="h5 card-title">DAB (ATM)</h2>
+                        <h2 class="h5 card-title"><i class="bi bi-credit-card-2-front"></i> DAB (ATM)</h2>
                         {% if atms %}
                             <ul class="atm-list list-group list-group-flush">
                                 {% for atm in atms %}
@@ -161,7 +154,7 @@
                 {# Affluence temps réel #}
                 <section class="detail-card card shadow-sm mb-4">
                     <div class="card-body">
-                        <h2 class="h5 card-title">Affluence en temps réel</h2>
+                        <h2 class="h5 card-title"><i class="bi bi-people"></i> Affluence en temps réel</h2>
                         {% if affluence %}
                             <div class="row g-3 affluence-stats-grid">
                                 <div class="col-6 col-sm-3">
@@ -219,7 +212,7 @@
                 {# Graphique historique #}
                 <section class="detail-card card shadow-sm mb-4">
                     <div class="card-body">
-                        <h2 class="h5 card-title">Évolution de l'affluence</h2>
+                        <h2 class="h5 card-title"><i class="bi bi-graph-up-arrow"></i> Évolution de l'affluence</h2>
                         {% if has_historique %}
                             <div class="chart-container">
                                 <canvas id="affluence-chart" aria-label="Graphique d'évolution de l'affluence"></canvas>
