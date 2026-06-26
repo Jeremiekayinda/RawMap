@@ -1,0 +1,2 @@
+# Dépendances principales du projet RawMap
+-r base.txt

@@ -1,0 +1,247 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block extra_css %}
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+>
+<link rel="stylesheet" href="{% static 'css/agency_detail.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="agency-detail-page py-4">
+    <div class="container">
+        {# Fil d'Ariane #}
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Carte</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ agence.nom }}</li>
+            </ol>
+        </nav>
+
+        <header class="agency-detail-header mb-4">
+            <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
+                <div>
+                    <h1 class="h2 mb-1">{{ agence.nom }}</h1>
+                    <p class="text-muted mb-0">{{ agence.code }}</p>
+                </div>
+                <div class="d-flex flex-wrap gap-2">
+                    <a
+                        href="{{ google_maps_url }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="btn btn-primary"
+                    >
+                        Itinéraire
+                    </a>
+                    <a href="{% url 'core:home' %}" class="btn btn-outline-secondary">
+                        Retour à la carte
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <div class="row g-4">
+            {# Colonne informations #}
+            <div class="col-lg-5">
+                {# Coordonnées #}
+                <section class="detail-card card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h2 class="h5 card-title">Informations</h2>
+                        <dl class="detail-dl mb-0">
+                            <dt>Adresse</dt>
+                            <dd>{{ adresse_complete }}</dd>
+                            <dt>Téléphone</dt>
+                            <dd>
+                                {% if agence.telephone %}
+                                    <a href="tel:{{ agence.telephone }}">{{ agence.telephone }}</a>
+                                {% else %}—{% endif %}
+                            </dd>
+                            <dt>Email</dt>
+                            <dd>
+                                {% if agence.email %}
+                                    <a href="mailto:{{ agence.email }}">{{ agence.email }}</a>
+                                {% else %}—{% endif %}
+                            </dd>
+                            {% if agence.description %}
+                            <dt>Description</dt>
+                            <dd>{{ agence.description }}</dd>
+                            {% endif %}
+                        </dl>
+                    </div>
+                </section>
+
+                {# Statut & horaires #}
+                <section class="detail-card card shadow-sm mb-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h2 class="h5 card-title mb-0">Horaires</h2>
+                            {% if is_open is None %}
+                                <span class="badge bg-secondary">Non renseigné</span>
+                            {% elif is_open %}
+                                <span class="badge bg-success">Ouverte</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Fermée</span>
+                            {% endif %}
+                        </div>
+                        {% if horaires %}
+                            <ul class="list-group list-group-flush horaires-list">
+                                {% for horaire in horaires %}
+                                <li class="list-group-item d-flex justify-content-between px-0">
+                                    <span>{{ horaire.get_jour_display }}</span>
+                                    <span class="text-muted">
+                                        {{ horaire.heure_ouverture|time:"H:i" }}
+                                        –
+                                        {{ horaire.heure_fermeture|time:"H:i" }}
+                                    </span>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="text-muted mb-0">Horaires non disponibles.</p>
+                        {% endif %}
+                    </div>
+                </section>
+
+                {# Services #}
+                <section class="detail-card card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h2 class="h5 card-title">Services disponibles</h2>
+                        {% if agence.services.all %}
+                            <ul class="services-list mb-0">
+                                {% for service in agence.services.all %}
+                                <li>
+                                    <strong>{{ service.nom }}</strong>
+                                    {% if service.description %}
+                                        <span class="text-muted d-block small">{{ service.description }}</span>
+                                    {% endif %}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="text-muted mb-0">Aucun service renseigné.</p>
+                        {% endif %}
+                    </div>
+                </section>
+
+                {# ATM #}
+                <section class="detail-card card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h2 class="h5 card-title">DAB (ATM)</h2>
+                        {% if atms %}
+                            <ul class="atm-list list-group list-group-flush">
+                                {% for atm in atms %}
+                                <li class="list-group-item px-0">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <strong>{{ atm.nom }}</strong>
+                                            <span class="text-muted d-block small">{{ atm.code_atm }}</span>
+                                        </div>
+                                        <span class="badge {% if atm.est_operational %}bg-success{% else %}bg-secondary{% endif %}">
+                                            {{ atm.get_statut_display }}
+                                        </span>
+                                    </div>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="text-muted mb-0">Aucun DAB rattaché à cette agence.</p>
+                        {% endif %}
+                    </div>
+                </section>
+            </div>
+
+            {# Colonne carte & affluence #}
+            <div class="col-lg-7">
+                {# Affluence temps réel #}
+                <section class="detail-card card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h2 class="h5 card-title">Affluence en temps réel</h2>
+                        {% if affluence %}
+                            <div class="row g-3 affluence-stats-grid">
+                                <div class="col-6 col-sm-3">
+                                    <div class="affluence-stat-box">
+                                        <span class="affluence-stat-label">Personnes</span>
+                                        <span class="affluence-stat-value">{{ affluence.personnes_presentes }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-sm-3">
+                                    <div class="affluence-stat-box">
+                                        <span class="affluence-stat-label">Occupation</span>
+                                        <span class="affluence-stat-value">{{ affluence.taux_occupation }} %</span>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-sm-3">
+                                    <div class="affluence-stat-box">
+                                        <span class="affluence-stat-label">Niveau</span>
+                                        <span class="niveau-badge niveau-{{ affluence.niveau }}">
+                                            {{ affluence.get_niveau_display }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-sm-3">
+                                    <div class="affluence-stat-box">
+                                        <span class="affluence-stat-label">Capacité</span>
+                                        <span class="affluence-stat-value">{{ agence.capacite_max }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            {% if affluence.derniere_mise_a_jour %}
+                            <p class="text-muted small mt-3 mb-0">
+                                Dernière mise à jour :
+                                {{ affluence.derniere_mise_a_jour|date:"d/m/Y H:i" }}
+                            </p>
+                            {% endif %}
+                        {% else %}
+                            <p class="text-muted mb-0">Données d'affluence non disponibles.</p>
+                        {% endif %}
+                    </div>
+                </section>
+
+                {# Carte Leaflet #}
+                <section class="detail-card card shadow-sm mb-4">
+                    <div class="card-body p-0">
+                        <div
+                            id="agency-detail-map"
+                            data-latitude="{{ latitude }}"
+                            data-longitude="{{ longitude }}"
+                            data-agency-name="{{ agence.nom }}"
+                            aria-label="Carte de localisation de {{ agence.nom }}"
+                        ></div>
+                    </div>
+                </section>
+
+                {# Graphique historique #}
+                <section class="detail-card card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h2 class="h5 card-title">Évolution de l'affluence</h2>
+                        {% if has_historique %}
+                            <div class="chart-container">
+                                <canvas id="affluence-chart" aria-label="Graphique d'évolution de l'affluence"></canvas>
+                            </div>
+                            <script id="affluence-chart-data" type="application/json">{{ chart_data_json|safe }}</script>
+                        {% else %}
+                            <p class="text-muted mb-0">Pas encore d'historique d'affluence pour cette agence.</p>
+                        {% endif %}
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="{% static 'js/agency_detail.js' %}"></script>
+{% endblock %}

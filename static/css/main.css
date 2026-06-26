@@ -1,0 +1,27 @@
+/**
+ * RawMap — Styles principaux
+ */
+
+:root {
+    --rawmap-primary: #0d6efd;
+    --rawmap-dark: #212529;
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: var(--rawmap-dark);
+}
+
+.hero-section {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+}
+
+.hero-logo {
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+}
+
+.navbar-brand img {
+    border-radius: 4px;
+}

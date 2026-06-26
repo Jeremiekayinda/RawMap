@@ -1,0 +1,134 @@
+/**
+ * RawMap — Styles page détail agence
+ */
+
+.agency-detail-page {
+    background-color: #f8f9fa;
+    min-height: calc(100vh - 120px);
+}
+
+.agency-detail-header h1 {
+    font-weight: 700;
+}
+
+.detail-card {
+    border: none;
+    border-radius: 0.75rem;
+}
+
+.detail-dl dt {
+    font-weight: 600;
+    color: #6c757d;
+    font-size: 0.875rem;
+    margin-top: 0.75rem;
+}
+
+.detail-dl dt:first-child {
+    margin-top: 0;
+}
+
+.detail-dl dd {
+    margin-bottom: 0;
+}
+
+.horaires-list .list-group-item {
+    background: transparent;
+}
+
+.services-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.services-list li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.services-list li:last-child {
+    border-bottom: none;
+}
+
+.atm-list .list-group-item {
+    background: transparent;
+}
+
+/* Affluence */
+.affluence-stats-grid {
+    margin-top: 0.5rem;
+}
+
+.affluence-stat-box {
+    background: #f8f9fa;
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    text-align: center;
+    height: 100%;
+}
+
+.affluence-stat-label {
+    display: block;
+    font-size: 0.8125rem;
+    color: #6c757d;
+    margin-bottom: 0.25rem;
+}
+
+.affluence-stat-value {
+    display: block;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #212529;
+}
+
+.niveau-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #fff;
+}
+
+.niveau-badge.niveau-vert {
+    background-color: #28a745;
+}
+
+.niveau-badge.niveau-orange {
+    background-color: #fd7e14;
+}
+
+.niveau-badge.niveau-rouge {
+    background-color: #dc3545;
+}
+
+/* Carte Leaflet */
+#agency-detail-map {
+    width: 100%;
+    height: 320px;
+    border-radius: 0 0 0.75rem 0.75rem;
+    z-index: 1;
+}
+
+@media (min-width: 992px) {
+    #agency-detail-map {
+        height: 360px;
+    }
+}
+
+/* Graphique */
+.chart-container {
+    position: relative;
+    height: 280px;
+    width: 100%;
+}
+
+@media (max-width: 575.98px) {
+    #agency-detail-map {
+        height: 260px;
+    }
+
+    .chart-container {
+        height: 220px;
+    }
+}
